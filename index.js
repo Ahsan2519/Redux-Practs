@@ -2,10 +2,12 @@ const redux = require("redux");
 const createStore = redux.createStore;
 const bindActionCreators = redux.bindActionCreators;
 const combineReducers = redux.combineReducers;
+const produce = require('immer').produce;
 const CAKE_ORDER = "CAKE_ORDER";
 const RESTOCK_CAKE = "RESTOCK_CAKE";
 const ICECREAM_ORDER = "ICECREAM_ORDER";
 const RESTOCK_ICECREAM = "RESTOCK_ICECREAM";
+const CUSTOMER_VISITED = 'CUSTOMER_VISITED';
 
 const orderCake = () => {
   return {
@@ -31,9 +33,20 @@ const resStockIcecream = (qty) => {
     payload: qty,
   };
 };
+const customer = (pincode,city) => {
+  return {
+    type: CUSTOMER_VISITED,
+    payload: {pincode,city},
+  };
+};
 const initialState = {
   nunmOfCake: 10,
   numberOfIcecream: 25,
+  customerAddress: {
+    state:"mh",
+    zipCode: 400043,
+    city: 'mumbai'
+  }
 };
 
 const cakeReducer = (state = initialState, action) => {
@@ -49,6 +62,21 @@ const cakeReducer = (state = initialState, action) => {
         ...state,
         nunmOfCake: state.nunmOfCake + action.payload,
       };
+    case CUSTOMER_VISITED:
+        // without immer
+    //   return {
+    //     ...state,
+    //     customerAddress : {
+    //         ...state.customerAddress,
+    //         zipCode: action.payload.pincode,
+    //         city: action.payload.city,
+    //     }
+    // with immer
+    return produce( state , draft =>{
+        draft.customerAddress.zipCode = action.payload.pincode;
+        draft.customerAddress.city = action.payload.city
+    })
+
     default:
       return state;
   }
@@ -82,7 +110,7 @@ const unsubscribe = store.subscribe(() =>
 );
 // here im binding the action creator with bindActionCreators
 const actions = bindActionCreators(
-  { orderCake, resStockCake, orderIcecream, resStockIcecream },
+  { orderCake, resStockCake, orderIcecream, resStockIcecream, customer },
   store.dispatch
 );
 // store.dispatch(orderCake());
@@ -92,6 +120,7 @@ actions.orderCake();
 actions.orderCake();
 actions.orderCake();
 actions.resStockCake(3);
+actions.customer(400008,'Navi Mumbai');
 actions.orderIcecream();
 actions.orderIcecream();
 actions.resStockIcecream(2);
