@@ -1,6 +1,7 @@
 const redux = require("redux");
 const createStore = redux.createStore;
 const bindActionCreators = redux.bindActionCreators;
+const combineReducers = redux.combineReducers;
 const CAKE_ORDER = "CAKE_ORDER";
 const RESTOCK_CAKE = "RESTOCK_CAKE";
 const ICECREAM_ORDER = "ICECREAM_ORDER";
@@ -35,7 +36,8 @@ const initialState = {
   numberOfIcecream: 25,
 };
 
-const reducer = (state = initialState, action) => {
+const cakeReducer = (state = initialState, action) => {
+  console.log(state.nunmOfCake);
   switch (action.type) {
     case CAKE_ORDER:
       return {
@@ -47,6 +49,13 @@ const reducer = (state = initialState, action) => {
         ...state,
         nunmOfCake: state.nunmOfCake + action.payload,
       };
+    default:
+      return state;
+  }
+};
+const IcecreamReducer = (state = initialState, action) => {
+  console.log(state.numberOfIcecream);
+  switch (action.type) {
     case ICECREAM_ORDER:
       return {
         ...state,
@@ -61,12 +70,17 @@ const reducer = (state = initialState, action) => {
       return state;
   }
 };
-
-const store = createStore(reducer);
+// here creating store with createStore
+const rootReducer = combineReducers({
+  cake: cakeReducer,
+  icecream: IcecreamReducer,
+});
+const store = createStore(rootReducer);
 console.log("initialSate:", store.getState());
 const unsubscribe = store.subscribe(() =>
   console.log("Updated Sate:", store.getState())
 );
+// here im binding the action creator with bindActionCreators
 const actions = bindActionCreators(
   { orderCake, resStockCake, orderIcecream, resStockIcecream },
   store.dispatch
