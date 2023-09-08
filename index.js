@@ -2,23 +2,21 @@ const redux = require("redux");
 const createStore = redux.createStore;
 const bindActionCreators = redux.bindActionCreators;
 const combineReducers = redux.combineReducers;
-const produce = require('immer').produce;
+const produce = require("immer").produce;
 const CAKE_ORDER = "CAKE_ORDER";
 const RESTOCK_CAKE = "RESTOCK_CAKE";
 const ICECREAM_ORDER = "ICECREAM_ORDER";
 const RESTOCK_ICECREAM = "RESTOCK_ICECREAM";
-const CUSTOMER_VISITED = 'CUSTOMER_VISITED';
+const CUSTOMER_VISITED = "CUSTOMER_VISITED";
 
 const orderCake = () => {
   return {
     type: CAKE_ORDER,
-    payload: 1,
   };
 };
 const orderIcecream = () => {
   return {
     type: ICECREAM_ORDER,
-    payload: 1,
   };
 };
 const resStockCake = (qty) => {
@@ -33,20 +31,20 @@ const resStockIcecream = (qty) => {
     payload: qty,
   };
 };
-const customer = (pincode,city) => {
+const customer = (pincode, city) => {
   return {
     type: CUSTOMER_VISITED,
-    payload: {pincode,city},
+    payload: { pincode, city },
   };
 };
 const initialState = {
   nunmOfCake: 10,
   numberOfIcecream: 25,
   customerAddress: {
-    state:"mh",
+    state: "mh",
     zipCode: 400043,
-    city: 'mumbai'
-  }
+    city: "mumbai",
+  },
 };
 
 const cakeReducer = (state = initialState, action) => {
@@ -63,19 +61,19 @@ const cakeReducer = (state = initialState, action) => {
         nunmOfCake: state.nunmOfCake + action.payload,
       };
     case CUSTOMER_VISITED:
-        // without immer
-    //   return {
-    //     ...state,
-    //     customerAddress : {
-    //         ...state.customerAddress,
-    //         zipCode: action.payload.pincode,
-    //         city: action.payload.city,
-    //     }
-    // with immer
-    return produce( state , draft =>{
+      // without immer
+      //   return {
+      //     ...state,
+      //     customerAddress : {
+      //         ...state.customerAddress,
+      //         zipCode: action.payload.pincode,
+      //         city: action.payload.city,
+      //     }
+      // with immer
+      return produce(state, (draft) => {
         draft.customerAddress.zipCode = action.payload.pincode;
-        draft.customerAddress.city = action.payload.city
-    })
+        draft.customerAddress.city = action.payload.city;
+      });
 
     default:
       return state;
@@ -120,7 +118,7 @@ actions.orderCake();
 actions.orderCake();
 actions.orderCake();
 actions.resStockCake(3);
-actions.customer(400008,'Navi Mumbai');
+actions.customer(400008, "Navi Mumbai");
 actions.orderIcecream();
 actions.orderIcecream();
 actions.resStockIcecream(2);
