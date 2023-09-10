@@ -28,8 +28,13 @@ const fetchUsers = () => {
       const { data } = await axios.get(
         `https://jsonplaceholder.typicode.com/posts/`
       );
-      //   console.log(data);
-      dispatch(userFetchFulfill(data));
+      let result = [];
+      data.forEach((element) => {
+        result.push({
+          title: element.title,
+        });
+      });
+      dispatch(userFetchFulfill(result));
     } catch (error) {
       dispatch(userFetchRejected(error.message));
     }
@@ -45,7 +50,7 @@ const initialSate = {
 const reducer = (state = initialSate, action) => {
   switch (action.type) {
     case USERS_PENDING:
-        // with immer
+      // with immer
       return produce(state, (draft) => {
         draft.isPending = true;
       });
@@ -56,11 +61,11 @@ const reducer = (state = initialSate, action) => {
         draft.isPending = false;
         draft.data = action.payload.value;
       });
-    //   return {
-    //     ...state,
-    //     isPending: false,
-    //     data: action.payload.value,
-    //   };
+    // return {
+    //   ...state,
+    //   isPending: false,
+    //   data: action.payload.value
+    // };
     case USERS_REJECTED:
       return produce(state, (draft) => {
         draft.isPending = false;
